@@ -1,0 +1,29 @@
+﻿@page "/funcionarios"
+
+<PageTitle>Funcionários</PageTitle>
+
+<MudText Typo="Typo.h4">Lista de Funcionários</MudText>
+
+<MudTable Items="funcionarios" Striped="true" Hover="true">
+    <HeaderContent>
+        <MudTh>Nome</MudTh>
+        <MudTh>Cargo</MudTh>
+        <MudTh>Salário</MudTh>
+        <MudTh>Departamento</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Nome">@context.Nome</MudTd>
+        <MudTd DataLabel="Cargo">@context.Cargo</MudTd>
+        <MudTd DataLabel="Cargo">@context.Salario</MudTd>
+        <MudTd DataLabel="Departamento">@context.Departamento?.Nome</MudTd>
+    </RowTemplate>
+</MudTable>
+
+@code {
+    private List<Funcionario>? funcionarios;
+
+    protected override async Task OnInitializedAsync()
+    {
+        funcionarios = await DataService.GetFuncionariosAsync();
+    }
+}

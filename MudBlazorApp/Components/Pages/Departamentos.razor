@@ -1,0 +1,18 @@
+﻿@page "/departamentos"
+
+<MudText Typo="Typo.h4">Departamentos</MudText>
+
+<MudDataGrid Items="@departamentos" Filterable="false" SortMode="@SortMode.None" Groupable="false">
+    <Columns>
+        <PropertyColumn Property="x => x.Nome" Title="Nome"/>
+    </Columns>
+</MudDataGrid>
+
+@code {
+    private List<Departamento>? departamentos;
+
+    protected override async Task OnInitializedAsync()
+    {
+        departamentos = await DataService.GetDepartamentoAsync();
+    }
+}

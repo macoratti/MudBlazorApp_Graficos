@@ -1,0 +1,59 @@
+﻿@page "/grafico-barras"
+@using MudBlazorApp.Entities
+@inject DataService DataService
+
+<style>
+    .mud-charts-bar-series {
+        transform: scaleX(5.0); 
+    }
+</style>
+@if (XAxisLabels != null && Series.Count > 0)
+{
+    <MudChart ChartType="ChartType.Bar" ChartSeries="@Series" @bind-SelectedIndex="Index"
+              XAxisLabels="@XAxisLabels"
+              Width="100%"
+              Height="450px">
+    </MudChart>
+    <MudText Typo="Typo.h6" Style="position: absolute; top: 10px; left: 50%; transform: translateX(-50%);">Despesa Salarial por Departamento</MudText>
+    <MudText Typo="Typo.h6" Style="position: absolute; top: 10px; left: 30%; transform: translateX(-50%);">Salários (R$)</MudText>
+    <MudText Typo="Typo.h6" Style="position: absolute; bottom: -5px; left: 30%; transform: translateX(-50%);">Departamentos</MudText>
+}
+else
+{
+    <MudText Typo="Typo.h6">Carregando dados...</MudText>
+}
+
+@code {
+    private int Index = -1; // Valor padrão não pode ser 0 -> primeiro selectedindex é 0.
+    private List<ChartSeries> Series = new List<ChartSeries>();
+    private string[]? XAxisLabels;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var salariosPorDepartamento = await DataService.GetSalariosPorDepartamentoAsync();
+
+        if (salariosPorDepartamento != null && salariosPorDepartamento.Count > 0)
+        {
+            var departamentos = salariosPorDepartamento.Keys.ToArray();
+            // Convertendo para double
+            var totalSalarios = salariosPorDepartamento.Values.Select(v => (double)v).ToArray(); 
+
+            // Configurar os rótulos do eixo X
+            //XAxisLabels = departamentos;
+            XAxisLabels = new string[] { };
+
+            // Criar séries para os departamentos
+            for (int i = 0; i < departamentos.Length; i++)
+            {
+                var departamento = departamentos[i];
+                var salario = totalSalarios[i];
+
+                Series.Add(new ChartSeries
+                    {
+                        Name = departamento,
+                        Data = new double[] { salario }
+                    });
+            }
+        }
+    }
+}
